@@ -2,11 +2,11 @@ const fs = require("fs");
 const path = require("path");
 const readline = require("readline");
 
-const filePath = path.join(__dirname, "tasks.json");
+const filePath = path.join(__dirname, "tasks.txt");
 
 
 if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, JSON.stringify([]));
+    fs.writeFileSync(filePath, "");
 }
 
 const rl = readline.createInterface({
@@ -15,18 +15,27 @@ const rl = readline.createInterface({
 });
 
 function loadTasks() {
-    const data = fs.readFileSync(filePath);
-    return JSON.parse(data);
+    const data = fs.readFileSync(filePath, "utf8");
+    return data.split("\n")
+        .filter(line => line.trim() !== "")
+        .map(line => ({
+            task: line.replace(" [completed]", ""),
+            completed: line.includes(" [completed]")
+        }));
+
+    
 }
 
+
 function saveTasks(tasks) {
-    fs.writeFileSync(filePath, JSON.stringify(tasks, null, 2));
+    const data = tasks.map(task => `${task.task}${task.completed ? " [completed]" : ""}`).join("\n");
+    fs.writeFileSync(filePath, data);
 }
 
 function addTask() {
     rl.question("Enter the task : ", (newTask) => {
         const tasks = loadTasks();
-        tasks.push({ task: newTask, completed: false }); 
+        tasks.push({ task: newTask, completed: false });
         saveTasks(tasks);
         console.log("Task Added Successfully!");
         mainMenu();
@@ -45,13 +54,13 @@ function viewTasks() {
         });
     }
     rl.question("Press 0 to go back to Main Menu : ", (back) => {
-        if(back === '0'){
+        if (back === '0') {
             mainMenu();
         }
     })
 }
 
-function displayTasks(){
+function displayTasks() {
     const tasks = loadTasks();
 
     if (tasks.length === 0) {
