@@ -47,11 +47,19 @@ const updateJob = async (req, res)=> {
     }
 }
 
-const deleteJob =  (req, res)=> {
-    res.status(200).json({
-        success:true,
-        message:"Job deleted successfully"
-    })
+const deleteJob =  async (req, res)=> {
+    try{
+        let jobId = req.params.id;
+        await jobModel.findByIdAndDelete(jobId);
+        res.status(200).json({
+            success:true,
+            message:"Job deleted successfully"
+        })
+    }
+    catch(err){
+        console.log("Error while deleting the job", err);
+    }
+   
 }
 
 module.exports = {createJob, fetchJobs, updateJob, deleteJob}
