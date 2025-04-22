@@ -4,7 +4,8 @@ const app = express();
 const fileRouter = require('./routes/fileRoutes');
 const mongoose = require('mongoose');
 
-app.use('/api/files', fileRouter);
+app.use(express.json());
+app.use('/', fileRouter);
 
 mongoose.connect('mongodb+srv://PratikYesare:HtxkzFVXze5U0xgr@file-sharing-app.y6u5dbl.mongodb.net/?retryWrites=true&w=majority&appName=file-sharing-app/fileStorage')
 .then(()=> console.log("Connected to DB Sucessfully!"))
